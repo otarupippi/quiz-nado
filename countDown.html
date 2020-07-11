@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Count Down</title>
+	<style>
+		.timer_container{
+			width:200px;
+			border:1px solid #282523;
+			position: relative;
+		}
+		.tape{
+			background-color:rgb(0, 255, 0);
+			width:100%;
+			height:20px;
+			text-align: center;
+		}
+		.timer{
+			position:absolute;
+			top:50%;
+			left:50%;
+			transform:translate(-50%,-50%);
+		}
+	</style>
+</head>
+<body>
+	<div class="inner">
+		<div class="timer_container">
+			<div class="tape" id="tape"></div>
+			<div class="timer" id="timer">10.000</div>
+		</div>
+		<input type="button" value="Start" id="start">
+	</div>
+
+	<script>
+		'use strict';
+
+		let startTime;
+		let stopped;
+
+		let limited;
+
+		function countDown(){
+			limited=Math.round(10000-(Date.now()-startTime))/1000;
+			document.getElementById('timer').textContent=limited;
+			if(limited>5){
+				document.getElementById('tape').style='width:'+(limited/10)*100+'%; background-color:rgb('+Math.floor(255-(((limited-5)/5)*255))+',255,0);';
+			}else if(limited<=0){
+				document.getElementById('tape').style='width:0;';
+			document.getElementById('timer').textContent=0;
+			}else{
+				document.getElementById('tape').style='width:'+(limited/10)*100+'%; background-color:rgb(255,'+Math.floor((limited/5)*255)+',0);';
+			}
+
+			if(stopped==0 && limited>0){
+				setTimeout(() => {
+					countDown();
+				}, 50);
+				/* ↑ミリ秒を指定。この数値が小さいほど短時間で更新される。試しに1000とかにして確かめてみたらよくわかるかも。
+				dotinstallでは10を指定してたので、1とか指定したら速いだろうけど重いpcにはちょっと負担がきついかなとか思ってみたり */
+			}else{
+				stopped=0;
+			}
+		}
+
+		document.getElementById('start').addEventListener('click',()=>{
+			stopped=0;
+			startTime=Date.now();
+			countDown();
+		})
+	</script>
+</body>
+</html>
